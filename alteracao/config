@@ -1,0 +1,12 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "local"]
+	url = /Users/eduardoaandrad/Dropbox/Desenv/Script/alteracao/
+	fetch = +refs/heads/*:refs/remotes/local/*
+[remote "origin"]
+	url = https://github.com/EduardoAlberto/scripts.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
