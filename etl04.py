@@ -2,13 +2,14 @@
 import mysql.connector
 import datetime as dt
 import petl as etl
+import os 
 import csv
 
 # variavel de data
 dt_carga = dt.date.today()
 
 # diretorio
-arquivo = '/Users/eduardoaandrad/Dropbox/Desenv/python/3_analise/infopreco.csv'
+infile = '/Users/eduardoaandrad/Dropbox/Desenv/python/3_analise/infopreco.csv'
 outfile = '/Users/eduardoaandrad/Dropbox/Desenv/script/csv/preco_'+str(dt_carga)+'.csv'
 
 #connect ao database 
@@ -18,7 +19,7 @@ try:
     # trunca ta tabela
     cur.execute('truncate table mydesenv.t_stg_valores')
     # carrega base e executa os tratamentos
-    tbl = (etl.fromcsv(arquivo, encoding = "ISO-8859-1",delimiter=';')
+    tbl = (etl.fromcsv(infile, encoding = "ISO-8859-1",delimiter=';')
                 .convert('CNPJ'         ,  str   )
                 .convert('NOME'         , 'upper')
                 .convert('ENDERECO'     , 'upper')
@@ -42,10 +43,15 @@ try:
      for row in csv_data:
          cur.execute('insert into mydesenv.t_stg_valores(CNPJ, NOME, ENDERECO, COMPLEMENTO, BAIRRO, MUNICIPIO, UF, PRODUTO, VALOR_VENDA, DATA_CADASTRO, DATA_CARGA) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',row[:11])
          mydb.commit()
-    # remove arquivo
+    #  remove os arquivos mais antigos
+    if os.path.exists(outfile):
+        os.remove((outfile))
+    else:
+        print('arquivo não existe !')
 
 except IOError:
     print('Arquivo não encontrado')
+
 
 
 
