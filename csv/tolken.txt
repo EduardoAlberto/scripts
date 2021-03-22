@@ -1,0 +1,2 @@
+nasa='7kUqzsFXfcaix34pP1vtK0z2g7eh6y00nAlZZNO6'
+football='3a48f133afd545dea4f0f25b5f42f400'

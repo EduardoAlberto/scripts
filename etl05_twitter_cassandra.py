@@ -14,11 +14,23 @@ import zipfile as zp
 data_carga = str(dt.date.today()).replace('-','')
 
 # chaves de conexão com twitter 
-consumer_key = 'vXXNO13798aXqygq4tt7qkPaH'
-consumer_secret = 'W0V2ML4BFqRF0NQZQ4XKVDYAVKb7S0GFboVbCJGy52TO9fEMf2'
+tolken = open('cript.txt', 'r')
 
-access_token = '1141802923921424384-NaInVXbx4fkcwsUtsWRz74ey4FKVBp'
-access_token_secret = '3xeTG6z7dt9RfhC4N23lnXSiATBkSZsNlHBla51zJxJSk'
+consumer_key = []
+consumer_secret = []
+access_token = []
+access_token_secret = []
+
+# chaves de conexão com twitter 
+for linha, tolken in enumerate(tolken):
+    if linha == 0:
+        consumer_key = tolken.replace("'",'').strip()
+    if linha == 1:
+        consumer_secret = tolken.replace("'",'').strip()
+    if linha == 2:
+        access_token = tolken.replace("'",'').strip()
+    if linha == 3:
+        access_token_secret = tolken.replace("'",'').strip()
 
 aut = tweepy.OAuthHandler(consumer_key, consumer_secret)
 aut.set_access_token(access_token, access_token_secret )

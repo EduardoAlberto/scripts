@@ -199,3 +199,18 @@
                 ,anonymized_role                       text(500)
 
             );
+-- sensores IOT
+create table if not exists tb_sensor_IOT
+(
+   ambient_temperature float 
+   ,datetime           datetime
+   ,humidity           float 
+   ,lat                float 
+   ,lng                float 
+   ,photo_sensor       float 
+   ,radiation_level    int 
+   ,sensor_id          text 
+   ,sensor_name        text 
+   ,sensor_uuid        text 
+   ,timestamp          timestamp 
+)

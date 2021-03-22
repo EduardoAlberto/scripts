@@ -1,45 +1,61 @@
-# lib
 
-# import dash
-import pandas as pd
-# from pandas.core.frame import DataFrame
+from dash_html_components.Figure import Figure
+from dash_html_components.H1 import H1
+import pyodbc 
 import dash
 import dash_table
-# import dash_core_components as dcc
-# import dash_html_components as html
 import sqlalchemy as mssdb
-
+import pandas as pd
+import datetime as dt
+import random
+import dash_core_components as dcc
+import dash_html_components as html
 
 
 # estilo da tabela
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-# conexao com o banco e origem do arquivo .csv
-# engine = mssdb.create_engine('mssql+pymssql://sa:Numsey@Password!@localhost:1401/DBDESENV')
-engine = mssdb.create_engine("mssql+pyodbc://sa:Numsey@Password!@localhost,1401/DBDESENV?driver=ODBC+DRIVER+17+for+SQL+Server")
-# engine = mssdb.create_engine('mssql+pyodbc://sa:Numsey@Password!@localhost,1401')
+cnxn = pyodbc.connect(DRIVER='{ODBC Driver 17 for SQL Server}',SERVER='localhost,1401',DATABASE='DBDESENV',UID='sa',PWD='Numsey@Password!')
+cursor = cnxn.cursor()
 
-# cria dataframe com o arquivo .csv
-df = pd.read_csv("/Users/eduardoaandrad/Dropbox/Desenv/Script/csv/kc_house_data.csv", sep=',', header=0, encoding='utf8', index_col=False)
-# formata as colunas
-df['dt_date']=df['dt_date'].apply(pd.to_datetime) 
-df['lat']=df['lat'].apply(pd.to_numeric).map('{:,.3f}'.format)
-df['long']=df['long'].apply(pd.to_numeric).map('{:,.3f}'.format) 
+# insert da tabela
+csv = pd.read_csv("/Users/eduardoaandrad/Dropbox/Desenv/Script/csv/kc_house_data.csv")
+cursor.fast_executemany = True
+cursor.execute('truncate table stg_bi_vendas')
+cursor.executemany("insert into stg_bi_vendas values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", csv.values.tolist())
+cursor.execute('exec sp_carga_vendas')
+tabela01 = pd.read_sql('select top 10 * from %s' % 'tb_bi_vendas', cnxn)
+tabela02 = pd.read_sql('select * from %s' % 'tb_bi_vendas', cnxn)
+cursor.commit()
+cursor.close()
+cnxn.close()
+
+dados = pd.DataFrame(tabela02)
+
+datadia = dados['dtatualizacao'].max()
 
 
-arquivo = pd.DataFrame(df)
-arquivo.to_sql('vendas', con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None, dtype={'dt_date':mssdb.types.Date})
+total_price = 0
+total_price15 = 0
+total_living = 0
+total_living15 = 0
+total_lot = 0
+total_lot15 = 0
 
-# consultando a tabela no mssql
-select = pd.read_sql('select top 10 * from %s' % 'stg_vendas', engine)
 
-# cria tabela com dados da api 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+total_price   = dados['price'].sum() / random.randint(1, 5)
+total_living  = dados['sqft_living'].sum() / random.randint(1, 5)
+total_lot     = dados['sqft_lot'].sum() / random.randint(1, 5) 
+
+
+total_price15  = dados['price'].sum() / random.randint(1, 10)
+total_living15 = dados['sqft_living15'].sum()  / random.randint(1, 10)
+total_lot15    = dados['sqft_lot15'].sum() / random.randint(1, 10) 
 
 # tabela html de exibição 
-app.layout = dash_table.DataTable(
-    data=select.to_dict('records'),
-    columns = [{'id': c, 'name': c} for c in select.columns],
+Tabela = dash_table.DataTable(
+    data=tabela01.to_dict('records'),
+    columns = [{'id': c, 'name': c} for c in tabela01.columns],
     style_cell_conditional=[
         {
             'if': {'column_id': c},
@@ -58,9 +74,29 @@ app.layout = dash_table.DataTable(
     }
 
 ) 
+# cria tabela com dados da api 
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+app.layout = html.Center(children=[
+    html.H1(children='Dashboard do Arquivo CSV'),
+    Tabela,
+    dcc.Graph(
+        id='example-graph',
+        figure={
+            'data': [
+                    {'x':['Total Price','Total Living','Total Lot'], 'y':[total_price,total_living,total_lot], 'type': 'bar', 'name': 'Total Valor'},
+                    {'x':['Total Price','Total Living','Total Lot'], 'y':[total_price15,total_living15,total_lot15], 'type': 'bar', 'name': 'Total Valor'},
+                    
+            ],
+            'layout': {
+                'title': 'Cargar CSV'
+            }
+        }
+    )
+])
+
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=True)
 
-
-
+                    

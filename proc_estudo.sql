@@ -77,9 +77,9 @@ as
         ,convert(numeric(15,6),b.long)	        
         ,convert(float,b.sqft_living15)	
         ,convert(float,b.sqft_lot15)	
-        ,getdate() as  dtatualizacao          
+        ,convert(date,getdate()) as  dtatualizacao          
     from stg_bi_vendas b
-    where not exists(select id_num, dtatualizacao from tb_bi_vendas a where a.id = convert(bigint,left(replace(b.id,'.',''),10))  and a.dtatualizacao = dtatualizacao )
+    where not exists(select id_num, dtatualizacao from tb_bi_vendas a where a.id_num = convert(bigint,left(replace(b.id,'.',''),10))  and a.dtatualizacao = dtatualizacao )
     
     TRUNCATE TABLE stg_bi_vendas
 
@@ -90,11 +90,22 @@ as
     select * from stg_bi_vendas
 
 
-truncate table tb_bi_vendas
+MERGE stg_bi_vendas T
+USING tb_bi_vendas S ON T.id_num=S.convert(bigint,left(replace(b.id,'.',''),10))
+and s.dtatualizacao = T.dtatualizacao
+WHEN NOT MATCHED BY TARGET 
+THEN 
+INSERT (LocationID,LocationName)
+VALUES (S.LocationID,S.LocationName); 
+
+truncate table tb_bi_vendaså
 truncate table stg_bi_vendas
 
 
-exec sp_carga_vendas
-	
+exec sp_carga_vendas 
+
+
+-- teste de merge no sql server
+
   
 

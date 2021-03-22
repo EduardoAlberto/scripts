@@ -1,9 +1,18 @@
 # criação de web scriping 
 import pandas as pd
 import requests
-import mysql.connector
+import dash
+import dash_table
+import sqlalchemy as mysdb
+import sqlalchemy as mssdb
 from bs4 import BeautifulSoup
 
+
+# conexao com banco
+# MSSQL
+engineMssdb = mssdb.create_engine("mssql+pyodbc://sa:Numsey@Password!@localhost,1401/DBDESENV?driver=ODBC+DRIVER+17+for+SQL+Server")
+# MYSQL
+engineMysdb = mysdb.create_engine('mysql+mysqlconnector://root:mysql@localhost:3306/mydesenv')
 
 # url
 ano = input('digite o ano: ')
@@ -38,25 +47,25 @@ saldoGols      = pontuacao['sg']
 # unificando tudo em uma unica tabela
 
 tabela=[]
-for a, b,c,d,e,f,g,h,i in zip(clube, pontos,jogos,vitorias,empates,derrotas,gols,golsContras,saldoGols):
+for clube, pontos,jogos,vitorias,empates,derrotas,derrotas,golsContras,saldoGols in zip(clube, pontos,jogos,vitorias,empates,derrotas,derrotas,golsContras,saldoGols):
     tbl = [   
-             a
-            ,b
-            ,c
-            ,d
-            ,e
-            ,f
-            ,g
-            ,h
-            ,i
+             clube
+            ,pontos
+            ,jogos
+            ,vitorias
+            ,empates
+            ,derrotas
+            ,derrotas
+            ,golsContras
+            ,saldoGols
     ]
     tabela.append(tbl)
-txt = pd.DataFrame(tabela) 
+txt = pd.DataFrame(tabela, columns=['TIME','P','J','V','E','D','G','GC','SG']) 
 
-print(txt)
+# cria as tabelas no banco
+txt.to_sql('tb_campeonadobrasil_{}'.format(ano), con=engineMssdb, if_exists='replace', schema='dbo', index=False, chunksize = None)
+txt.to_sql('tb_campeonadobrasil_{}'.format(ano), con=engineMysdb, if_exists='replace',  index=False)
 
-# txt = pd.DataFrame(tbl1, columns=[ 'TIME','P','J','V','E','D','G','GC','SG'])
+# criado dashboard
 
-# print(txt)
-  
 
