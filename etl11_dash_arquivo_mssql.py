@@ -15,14 +15,14 @@ import dash_html_components as html
 # estilo da tabela
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-cnxn = pyodbc.connect(DRIVER='{ODBC Driver 17 for SQL Server}',SERVER='localhost,1401',DATABASE='DBDESENV',UID='sa',PWD='Numsey@Password!')
+cnxn = pyodbc.connect(DRIVER='{ODBC Driver 17 for SQL Server}',SERVER='localhost,1433',DATABASE='TutorialDB',UID='sa',PWD='Numsey@Password!')
 cursor = cnxn.cursor()
 
 # insert da tabela
 csv = pd.read_csv("/Users/eduardoaandrad/Dropbox/Desenv/Script/csv/kc_house_data.csv")
 cursor.fast_executemany = True
-cursor.execute('truncate table stg_bi_vendas')
-cursor.executemany("insert into stg_bi_vendas values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", csv.values.tolist())
+cursor.execute('truncate table tmp_bi_vendas')
+cursor.executemany("insert into tmp_bi_vendas values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", csv.values.tolist())
 cursor.execute('exec sp_carga_vendas')
 tabela01 = pd.read_sql('select top 10 * from %s' % 'tb_bi_vendas', cnxn)
 tabela02 = pd.read_sql('select * from %s' % 'tb_bi_vendas', cnxn)

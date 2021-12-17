@@ -17,7 +17,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # conexao com o banco e origem do arquivo .csv
 # engine = mssdb.create_engine('mssql+pymssql://sa:Numsey@Password!@localhost:1401/DBDESENV')
 # engine = mssdb.create_engine("mssql+pyodbc://sa:Numsey@Password!@localhost,1401/DBDESENV?driver=ODBC+DRIVER+17+for+SQL+Server")
-engine = mssdb.create_engine("mssql+pyodbc://sa:Numsey@Password!@localhost,1433/DBPRD?driver=ODBC+DRIVER+17+for+SQL+Server")
+engine = mssdb.create_engine("mssql+pyodbc://sa:Numsey@Password!@localhost,1433/TutorialDB?driver=ODBC+DRIVER+17+for+SQL+Server")
 # engine = mssdb.create_engine('mssql+pyodbc://sa:Numsey@Password!@localhost,1401')
 
 # cria dataframe com o arquivo .csv
@@ -32,7 +32,7 @@ arquivo = pd.DataFrame(df)
 arquivo.to_sql('vendas', con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None, dtype={'dt_date':mssdb.types.Date})
 
 # consultando a tabela no mssql
-select = pd.read_sql('select top 10 * from %s' % 'stg_vendas', engine)
+select = pd.read_sql('select top 10 * from %s' % 'vendas', engine)
 
 # cria tabela com dados da api 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)

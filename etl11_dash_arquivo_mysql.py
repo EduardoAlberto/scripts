@@ -15,7 +15,7 @@ import sqlalchemy as mydb
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # conexao com o banco e origem do arquivo .csv
-engine = mydb.create_engine('mysql+mysqlconnector://root:mysql@localhost:3306/mydesenv')
+engine = mydb.create_engine('mysql+mysqlconnector://root:mysql@localhost:3306/mydesenv?auth_plugin=mysql_native_password')
 
 
 
@@ -31,10 +31,10 @@ df['long']=df['long'].apply(pd.to_numeric).map('{:,.3f}'.format)
 
 
 arquivo = pd.DataFrame(df)
-arquivo.to_sql('stg_vendas', con=engine, if_exists='replace',  index=False, dtype={'dt_date':mydb.types.Date})
+arquivo.to_sql('tmp_vendas', con=engine, if_exists='replace',  index=False, dtype={'dt_date':mydb.types.Date})
 
 # consultando a tabela no mssql
-select = pd.read_sql('select * from %s limit 10' % 'stg_vendas', engine)
+select = pd.read_sql('select * from %s limit 10' % 'tmp_vendas', engine)
 
 # cria tabela com dados da api 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)

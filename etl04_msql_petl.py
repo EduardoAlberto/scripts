@@ -17,7 +17,7 @@ mydb = mysql.connector.connect(user='root',password='mysql',host='0.0.0.0',datab
 cur = mydb.cursor()
 try:
     # trunca ta tabela
-    cur.execute('truncate table mydesenv.t_stg_valores')
+    cur.execute('truncate table mydesenv.t_tmp_valores')
     # carrega base e executa os tratamentos
     tbl = (etl.fromcsv(infile, encoding = "ISO-8859-1",delimiter=';')
                 .convert('CNPJ'         ,  str   )
@@ -41,7 +41,7 @@ try:
     with open(outfile, encoding = "ISO-8859-1") as arq:
      csv_data = csv.reader(arq, delimiter=';')
      for row in csv_data:
-         cur.execute('insert into mydesenv.t_stg_valores(CNPJ, NOME, ENDERECO, COMPLEMENTO, BAIRRO, MUNICIPIO, UF, PRODUTO, VALOR_VENDA, DATA_CADASTRO, DATA_CARGA) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',row[:11])
+         cur.execute('insert into mydesenv.t_tmp_valores(CNPJ, NOME, ENDERECO, COMPLEMENTO, BAIRRO, MUNICIPIO, UF, PRODUTO, VALOR_VENDA, DATA_CADASTRO, DATA_CARGA) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',row[:11])
          mydb.commit()
     #  remove os arquivos mais antigos
     if os.path.exists(outfile):

@@ -11,7 +11,7 @@
  --- * create tabela de valores gazolina *---
  drop table t_valores;
  
- create table t_stg_valores (CNPJ int
+ create table t_tmp_valores (CNPJ int
 						 ,NOME text(100)
                          ,ENDERECO text(500)
                          ,COMPLEMENTO text(500)
@@ -23,7 +23,7 @@
                          ,DATA_CADASTRO date
                          ,DATA_CARGA date
                          );
- select * from t_stg_valores;
+ select * from t_tmp_valores;
 
  create table if not exists tb_analise_mercado 
             (

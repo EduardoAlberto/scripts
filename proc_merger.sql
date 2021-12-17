@@ -3,7 +3,7 @@ create or alter proc carga_merger as
 -- store procedure de carga das dimensões
 -- Tb_MoviePopular
 merge Tb_MoviePopular T
-using stg_MoviePopular S  on t.id = s.ID
+using tmp_MoviePopular S  on t.id = s.ID
 when matched THEN
 update set   ID = s.ID
             ,Titulo = s.Titulo
@@ -21,7 +21,7 @@ Delete;
 
 -- Tb_MovieRecomendacao
 merge Tb_MovieRecomendacao T
-using stg_MovieRecomendacao S  on t.id = s.ID
+using tmp_MovieRecomendacao S  on t.id = s.ID
 when matched THEN
 update set     ID = s.ID
               ,IdiomaOriginal = s.IdiomaOriginal
@@ -41,7 +41,7 @@ Delete;
 
 -- Tb_MovieReview
 merge Tb_MovieReview T
-using stg_MovieReview S  on t.updated_at = s.updated_at
+using tmp_MovieReview S  on t.updated_at = s.updated_at
 when matched THEN
 update set Autor = s.Autor
           ,DetalheAutor = s.DetalheAutor
@@ -60,7 +60,7 @@ Delete;
 
 --- TB_Popular
 merge Tb_Popular T
-using stg_Popular S  on t.id = s.ID
+using tmp_Popular S  on t.id = s.ID
 when matched THEN
 update set   id = s.id
             ,Name = s.Name
@@ -78,16 +78,16 @@ Delete;
 
 
 
-select * from stg_MoviePopular
+select * from tmp_MoviePopular
 
-insert into stg_MoviePopular values(777355,'Hunter X Hunter', 'Anime estilo luta', 881.32 ,45,'2020-12-31')
-update stg_MoviePopular
+insert into tmp_MoviePopular values(777355,'Hunter X Hunter', 'Anime estilo luta', 881.32 ,45,'2020-12-31')
+update tmp_MoviePopular
 set QtdVotos = 100
 where id = 777355   
 
 select * from Tb_MoviePopular where id = 777355
 
-sp_help 'stg_Popular'
+sp_help 'tmp_Popular'
 
 --Analise dados DW 
 select * from dwproducao.dbo.DimAccount

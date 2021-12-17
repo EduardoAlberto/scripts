@@ -1,6 +1,6 @@
 import mysql.connector
 import csv
-mydb = mysql.connector.connect(user='root',password='mysql',host='0.0.0.0',database='mydesenv')
+mydb = mysql.connector.connect(user='root',password='mysql',host='0.0.0.0',database='mydesenv',auth_plugin='mysql_native_password')
 cursor = mydb.cursor()
 with open('/Users/eduardoaandrad/Dropbox/Desenv/script/csv/carga_teste.csv') as source:
     csv_data = csv.reader(source, delimiter=';')

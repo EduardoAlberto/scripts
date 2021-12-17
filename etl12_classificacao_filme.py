@@ -88,9 +88,9 @@ for tv in TvPopular:
     tabela04.append(tbl)
 TVPopular = pd.DataFrame(tabela04, columns=['id', 'Name', 'IdiomaOriginal', 'QtdVotos', 'DtEstreia', 'Popularidade', 'Resumo'])
 
-MoviePopular.to_sql('stg_MoviePopular',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
-MovieRecomendacao.to_sql('stg_MovieRecomendacao',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
-MovieReview.to_sql('stg_MovieReview',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
-TVPopular.to_sql('stg_Popular',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
+MoviePopular.to_sql('tmp_MoviePopular',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
+MovieRecomendacao.to_sql('tmp_MovieRecomendacao',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
+MovieReview.to_sql('tmp_MovieReview',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
+TVPopular.to_sql('tmp_Popular',con=engine, if_exists='replace', schema='dbo', index=False, chunksize = None)
 
 

@@ -74,7 +74,7 @@ def acessa_banco(palavra):
        session.execute("""CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class': 'SimpleStrategy', 'replication_factor' :'1' }"""% palavra)
        session.set_keyspace(palavra)
        session.execute("""
-              create table if not exists stg_{}(
+              create table if not exists tmp_{}(
                       user_id           uuid  
                      ,usuario           text
                      ,localizacao       text
@@ -93,7 +93,7 @@ def acessa_banco(palavra):
        )
 
        # insert da tabela 
-       query = "insert into stg_{} (user_id, usuario, localizacao, total_amigos, total_seguidores, total_listas, total_likes, status_verificado, total_status, total_retweet, tweet,dt_load ) \
+       query = "insert into tmp_{} (user_id, usuario, localizacao, total_amigos, total_seguidores, total_listas, total_likes, status_verificado, total_status, total_retweet, tweet,dt_load ) \
        values (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,dateOf(now()))".format(palavra)
                
        prepared = session.prepare(query)
@@ -110,7 +110,7 @@ def acessa_banco(palavra):
                              , row['total_retweet']
                              , row['tweet'])
                              )
-       row = session.execute('select * from stg_{}'.format(palavra))  
+       row = session.execute('select * from tmp_{}'.format(palavra))  
        gera_csv = pd.DataFrame(row)
        gera_csv.to_csv(file_input, sep=';')
 
